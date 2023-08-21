@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import { ArrowRightIcon, ChevronDownIcon, ChevronUpIcon, SettingsIcon } from '@chakra-ui/icons'
-import { Box, Button, Container, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, VStack, Wrap, WrapItem, useBoolean, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Container, Flex, FormControl, FormHelperText, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, SimpleGrid, Spacer, Stack, Switch, Text, VStack, Wrap, WrapItem, useBoolean, useDisclosure } from '@chakra-ui/react'
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [ advance, setAdvance ] = useBoolean()
+  const [ advance, setAdvance ] = useBoolean(true)
 
   return (
     <>
@@ -14,12 +14,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Container pt={10} maxW={'container.md'}>
-        <VStack spacing={10}>
-          <Box>
-            <Heading>
-              Link Service
-              <IconButton variant={'ghost'} icon={<SettingsIcon />} fontSize={'xl'} onClick={onOpen} />
-            </Heading>
+        <Stack spacing={5}>
+          <Flex>
+            <Heading>Link Service</Heading>
+            <Spacer />
+            <IconButton variant={'ghost'} icon={<SettingsIcon />} fontSize={'xl'} onClick={onOpen} />
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
               <ModalContent>
@@ -39,8 +38,8 @@ export default function Home() {
                 </ModalFooter>
               </ModalContent>
             </Modal>
-          </Box>
-          <VStack w={'100%'} spacing={2}>
+          </Flex>
+          <VStack spacing={1}>
             <InputGroup>
               <InputLeftAddon children='URL' />
               <Input type='url' placeholder='https://the.url.com/that/you/want/to/shorten' autoComplete='off' />
@@ -51,14 +50,35 @@ export default function Home() {
               <ChevronDownIcon fontSize={'xl'} display={advance ? 'block' : 'none'} />
               <ChevronUpIcon fontSize={'xl'} display={advance ? 'none' : 'block'} />
             </Button>
-            <Wrap display={advance ? 'block' : 'none'}>
-              <WrapItem>
-                <Text>Whatever</Text>
-                <Input type='email' />
-              </WrapItem>
-            </Wrap>
+            <Box display={advance ? 'block' : 'none'}>
+              <SimpleGrid columns={[1, 2, 4]} spacingX={10} spacingY={2}>
+                <FormControl>
+                  <FormLabel>Alias</FormLabel>
+                  <Input type='text' placeholder='random' autoComplete='off' />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Duration</FormLabel>
+                  <Select>
+                    <option>1 hour</option>
+                    <option selected>24 hours</option>
+                    <option>3 days</option>
+                    <option>7 days</option>
+                    <option>30 days</option>
+                    <option>Presistent</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Private?</FormLabel>
+                  <Switch size='lg' />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Burn after Read?</FormLabel>
+                  <Switch size='lg' />
+                </FormControl>
+              </SimpleGrid>
+            </Box>
           </VStack>
-        </VStack>
+        </Stack>
       </Container>
     </>
   )
