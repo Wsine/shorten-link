@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import { ArrowRightIcon, ChevronDownIcon, ChevronUpIcon, SettingsIcon } from '@chakra-ui/icons'
-import { Box, Button, Container, Flex, FormControl, FormHelperText, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, SimpleGrid, Spacer, Stack, Switch, Text, VStack, Wrap, WrapItem, useBoolean, useDisclosure } from '@chakra-ui/react'
+import { AddIcon, ChevronDownIcon, ChevronUpIcon, LinkIcon, SettingsIcon, SmallCloseIcon } from '@chakra-ui/icons'
+import { AbsoluteCenter, Box, Button, Container, Divider, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, List, ListIcon, ListItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, SimpleGrid, Spacer, Stack, Switch, VStack, useBoolean, useDisclosure } from '@chakra-ui/react'
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -43,7 +43,7 @@ export default function Home() {
             <InputGroup>
               <InputLeftAddon children='URL' />
               <Input type='url' placeholder='https://the.url.com/that/you/want/to/shorten' autoComplete='off' />
-              <InputRightAddon children={<ArrowRightIcon />} />
+              <InputRightAddon children={<AddIcon />} />
             </InputGroup>
             <Button variant={'ghost'} onClick={setAdvance.toggle}>
               Advance
@@ -58,13 +58,13 @@ export default function Home() {
                 </FormControl>
                 <FormControl>
                   <FormLabel>Duration</FormLabel>
-                  <Select>
-                    <option>1 hour</option>
-                    <option selected>24 hours</option>
-                    <option>3 days</option>
-                    <option>7 days</option>
-                    <option>30 days</option>
-                    <option>Presistent</option>
+                  <Select value={'24h'}>
+                    <option value={'1h'}>1 hour</option>
+                    <option value={'24h'}>24 hours</option>
+                    <option value={'3d'}>3 days</option>
+                    <option value={'7d'}>7 days</option>
+                    <option value={'30d'}>30 days</option>
+                    <option value={'presist'}>Presistent</option>
                   </Select>
                 </FormControl>
                 <FormControl>
@@ -78,6 +78,38 @@ export default function Home() {
               </SimpleGrid>
             </Box>
           </VStack>
+          <Box position='relative' padding='1'>
+            <Divider />
+            <AbsoluteCenter bg='white' px='4'>
+              Public
+            </AbsoluteCenter>
+          </Box>
+          <List spacing={3}>
+            <ListItem display='flex'>
+              <ListIcon as={LinkIcon} color='green.500' />
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit
+              <Spacer />
+              <ListIcon as={SmallCloseIcon} color='green.500' />
+            </ListItem>
+            <ListItem display='flex'>
+              <ListIcon as={LinkIcon} color='green.500' />
+              Assumenda, quia temporibus eveniet a libero incidunt suscipit
+              <Spacer />
+              <ListIcon as={SmallCloseIcon} color='green.500' />
+            </ListItem>
+            <ListItem display='flex'>
+              <ListIcon as={LinkIcon} color='green.500' />
+              Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
+              <Spacer />
+              <ListIcon as={SmallCloseIcon} color='green.500' />
+            </ListItem>
+            <ListItem display='flex'>
+              <ListIcon as={LinkIcon} color='green.500' />
+              Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
+              <Spacer />
+              <ListIcon as={SmallCloseIcon} color='green.500' />
+            </ListItem>
+          </List>
         </Stack>
       </Container>
     </>
