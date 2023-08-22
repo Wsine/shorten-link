@@ -1,10 +1,29 @@
 import Head from 'next/head'
-import { AddIcon, ChevronDownIcon, ChevronUpIcon, LinkIcon, SettingsIcon, SmallCloseIcon } from '@chakra-ui/icons'
-import { AbsoluteCenter, Box, Button, Container, Divider, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, List, ListIcon, ListItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, SimpleGrid, Spacer, Stack, Switch, VStack, useBoolean, useDisclosure } from '@chakra-ui/react'
+import { AddIcon, LinkIcon, SettingsIcon, SmallCloseIcon } from '@chakra-ui/icons'
+import { AbsoluteCenter, Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Container, Divider, Flex, FormControl, FormLabel, Heading, IconButton, Input, InputGroup, InputLeftAddon, InputRightAddon, List, ListIcon, ListItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, SimpleGrid, Spacer, Stack, Switch, Text, VStack, useBoolean, useDisclosure, useToast } from '@chakra-ui/react'
+import { Link } from '@chakra-ui/next-js'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [ advance, setAdvance ] = useBoolean(true)
+  const [isLoading, setLoading] = useState(false)
+  const [alias, setAlias] = useState('')
+  const [expire, setExpire] = useState('24h')
+  const [isPrivate, setPrivate] = useBoolean(false)
+  const [toBurn, setBurn] = useBoolean(false)
+  const [links, setLinks] = useState([])
+  useEffect(() => {
+    setLinks([
+      { alias: 'hello', url: 'https://google.com' },
+      { alias: 'world', url: 'https://google.com/this_is-a_very_long_sententce_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },
+      { alias: 'github', url: 'https://google.com?I.do.like.it' },
+      { alias: 'stack', url: 'https://google.com:yyyyyyy' },
+      { alias: 'overfl', url: 'https://google.com' },
+      { alias: 'six', url: 'https://google.com' },
+      { alias: 'a', url: 'https://google.com' },
+    ])
+  }, [])
+  const toast = useToast()
 
   return (
     <>
@@ -39,76 +58,105 @@ export default function Home() {
               </ModalContent>
             </Modal>
           </Flex>
-          <VStack spacing={1}>
+          <VStack spacing={1} mb={10}>
             <InputGroup>
               <InputLeftAddon children='URL' />
               <Input type='url' placeholder='https://the.url.com/that/you/want/to/shorten' autoComplete='off' />
-              <InputRightAddon children={<AddIcon />} />
+              <InputRightAddon p={0} children={<Button isLoading={isLoading} onClick={() => {
+                const url = document.querySelector('input[type=url]').value
+                console.log(url)
+                try {
+                  new URL(url)
+                } catch (e) {
+                  toast({
+                    title: 'Invalid URL',
+                    description: e.toString(),
+                    status: 'warning',
+                    isClosable: true
+                  })
+                  return
+                }
+                setLoading(true)
+                fetch('/api/add', {
+                  method: 'post',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-Custom-PSK': localStorage.getItem('psk')
+                  },
+                  body: JSON.stringify({
+                    url: url,
+                    alias: alias,
+                    expire: expire,
+                    private: isPrivate,
+                    burn: toBurn
+                  })
+                })
+                .then(r => r.json())
+                .then(r => {
+                    console.log(r)
+                    toast(r)
+                    setLoading(false)
+                })
+              }}><AddIcon /></Button>}></InputRightAddon>
             </InputGroup>
-            <Button variant={'ghost'} onClick={setAdvance.toggle}>
-              Advance
-              <ChevronDownIcon fontSize={'xl'} display={advance ? 'block' : 'none'} />
-              <ChevronUpIcon fontSize={'xl'} display={advance ? 'none' : 'block'} />
-            </Button>
-            <Box display={advance ? 'block' : 'none'}>
-              <SimpleGrid columns={[1, 2, 4]} spacingX={10} spacingY={2}>
-                <FormControl>
-                  <FormLabel>Alias</FormLabel>
-                  <Input type='text' placeholder='random' autoComplete='off' />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Duration</FormLabel>
-                  <Select value={'24h'}>
-                    <option value={'1h'}>1 hour</option>
-                    <option value={'24h'}>24 hours</option>
-                    <option value={'3d'}>3 days</option>
-                    <option value={'7d'}>7 days</option>
-                    <option value={'30d'}>30 days</option>
-                    <option value={'presist'}>Presistent</option>
-                  </Select>
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Private?</FormLabel>
-                  <Switch size='lg' />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Burn after Read?</FormLabel>
-                  <Switch size='lg' />
-                </FormControl>
-              </SimpleGrid>
-            </Box>
+            <Accordion w='100%' allowToggle>
+              <AccordionItem>
+                <AccordionButton>
+                  <Box as="span" flex='1' textAlign='center'>
+                    Advance
+                  <AccordionIcon />
+                  </Box>
+                </AccordionButton>
+                <AccordionPanel>
+                  <SimpleGrid columns={[1, 2, 4]} spacingX={10} spacingY={2}>
+                    <FormControl>
+                      <FormLabel>Alias</FormLabel>
+                      <Input type='text' placeholder='random' autoComplete='off' maxLength={6} onChange={(e) => setAlias(e.target.value.trim())} />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Expire</FormLabel>
+                      <Select value={expire} onChange={(e) => setExpire(e.target.value)}>
+                        <option value={'1h'}>1 hour</option>
+                        <option value={'24h'}>24 hours</option>
+                        <option value={'3d'}>3 days</option>
+                        <option value={'7d'}>7 days</option>
+                        <option value={'30d'}>30 days</option>
+                        <option value={'never'}>never</option>
+                      </Select>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Private?</FormLabel>
+                      <Switch size='lg' onChange={setPrivate.toggle} />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Burn after Read?</FormLabel>
+                      <Switch size='lg' onChange={setBurn.toggle} />
+                    </FormControl>
+                  </SimpleGrid>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
           </VStack>
-          <Box position='relative' padding='1'>
+          <Box position='relative' p='1'>
             <Divider />
             <AbsoluteCenter bg='white' px='4'>
-              Public
+              <Text fontSize={'xl'} fontWeight={'bold'}>Public</Text>
             </AbsoluteCenter>
           </Box>
           <List spacing={3}>
-            <ListItem display='flex'>
-              <ListIcon as={LinkIcon} color='green.500' />
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit
-              <Spacer />
-              <ListIcon as={SmallCloseIcon} color='green.500' />
-            </ListItem>
-            <ListItem display='flex'>
-              <ListIcon as={LinkIcon} color='green.500' />
-              Assumenda, quia temporibus eveniet a libero incidunt suscipit
-              <Spacer />
-              <ListIcon as={SmallCloseIcon} color='green.500' />
-            </ListItem>
-            <ListItem display='flex'>
-              <ListIcon as={LinkIcon} color='green.500' />
-              Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
-              <Spacer />
-              <ListIcon as={SmallCloseIcon} color='green.500' />
-            </ListItem>
-            <ListItem display='flex'>
-              <ListIcon as={LinkIcon} color='green.500' />
-              Quidem, ipsam illum quis sed voluptatum quae eum fugit earum
-              <Spacer />
-              <ListIcon as={SmallCloseIcon} color='green.500' />
-            </ListItem>
+            {links.map((l) => {
+              return (
+                <ListItem display='flex' alignItems={'center'}>
+                  <ListIcon as={LinkIcon} color='green.500' />
+                  <Text bg='green.100' px={2} mr={2} minW={'70px'} textAlign={'center'}>{l.alias}</Text>
+                  <Link href={'https://google.com'} maxW={'80%'} whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'}>
+                    {l.url}
+                  </Link>
+                  <Spacer />
+                  <ListIcon as={SmallCloseIcon} color='green.500' role='button' />
+                </ListItem>
+              )
+            })}
           </List>
         </Stack>
       </Container>
