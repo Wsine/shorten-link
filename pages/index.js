@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react'
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isLoading, setLoading] = useState(false)
-  const [alias, setAlias] = useState('')
-  const [expire, setExpire] = useState('24h')
+  const [alias, setAlias] = useState(null)
+  const [expire, setExpire] = useState(86400)
   const [isPrivate, setPrivate] = useBoolean(false)
   const [toBurn, setBurn] = useBoolean(false)
   const [links, setLinks] = useState([])
@@ -76,7 +76,7 @@ export default function Home() {
                   })
                   return
                 }
-                setLoading(true)
+                // setLoading(true)
                 fetch('/api/add', {
                   method: 'post',
                   headers: {
@@ -87,8 +87,8 @@ export default function Home() {
                     url: url,
                     alias: alias,
                     expire: expire,
-                    private: isPrivate,
-                    burn: toBurn
+                    isPrivate: isPrivate,
+                    toBurn: toBurn
                   })
                 })
                 .then(r => r.json())
@@ -116,11 +116,10 @@ export default function Home() {
                     <FormControl>
                       <FormLabel>Expire</FormLabel>
                       <Select value={expire} onChange={(e) => setExpire(e.target.value)}>
-                        <option value={'1h'}>1 hour</option>
-                        <option value={'24h'}>24 hours</option>
-                        <option value={'3d'}>3 days</option>
-                        <option value={'7d'}>7 days</option>
-                        <option value={'30d'}>30 days</option>
+                        <option value={3600}>1 hour</option>
+                        <option value={86400}>24 hours</option>
+                        <option value={259200}>3 days</option>
+                        <option value={604800}>7 days</option>
                         <option value={'never'}>never</option>
                       </Select>
                     </FormControl>
@@ -144,9 +143,9 @@ export default function Home() {
             </AbsoluteCenter>
           </Box>
           <List spacing={3}>
-            {links.map((l) => {
+            {links.map((l, i) => {
               return (
-                <ListItem display='flex' alignItems={'center'}>
+                <ListItem display='flex' alignItems={'center'} key={i}>
                   <ListIcon as={LinkIcon} color='green.500' />
                   <Text bg='green.100' px={2} mr={2} minW={'70px'} textAlign={'center'}>{l.alias}</Text>
                   <Link href={'https://google.com'} maxW={'80%'} whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'}>
