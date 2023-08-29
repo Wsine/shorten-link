@@ -12,16 +12,17 @@ export default function Home() {
   const [isPrivate, setPrivate] = useBoolean(false)
   const [toBurn, setBurn] = useBoolean(false)
   const [links, setLinks] = useState([])
+  const [cursor, setCursor] = useState(undefined)
   useEffect(() => {
-    setLinks([
-      { alias: 'hello', url: 'https://google.com' },
-      { alias: 'world', url: 'https://google.com/this_is-a_very_long_sententce_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' },
-      { alias: 'github', url: 'https://google.com?I.do.like.it' },
-      { alias: 'stack', url: 'https://google.com:yyyyyyy' },
-      { alias: 'overfl', url: 'https://google.com' },
-      { alias: 'six', url: 'https://google.com' },
-      { alias: 'a', url: 'https://google.com' },
-    ])
+    fetch('/api/list')
+      .then(r => r.json())
+      .then(r => {
+        console.log(r)
+        setLinks(r.links)
+        if (r.cursor) {
+          setCursor(r.cursor)
+        }
+      })
   }, [])
   const toast = useToast()
 
@@ -76,7 +77,7 @@ export default function Home() {
                   })
                   return
                 }
-                // setLoading(true)
+                setLoading(true)
                 fetch('/api/add', {
                   method: 'post',
                   headers: {
@@ -95,6 +96,8 @@ export default function Home() {
                 .then(r => {
                     console.log(r)
                     toast(r)
+                    const _alias = r.description.slice(4)
+                    setLinks([...links, { alias: _alias, url: url }])
                     setLoading(false)
                 })
               }}><AddIcon /></Button>}></InputRightAddon>
@@ -120,7 +123,7 @@ export default function Home() {
                         <option value={86400}>24 hours</option>
                         <option value={259200}>3 days</option>
                         <option value={604800}>7 days</option>
-                        <option value={'never'}>never</option>
+                        <option value={0}>never</option>
                       </Select>
                     </FormControl>
                     <FormControl>
@@ -147,8 +150,8 @@ export default function Home() {
               return (
                 <ListItem display='flex' alignItems={'center'} key={i}>
                   <ListIcon as={LinkIcon} color='green.500' />
-                  <Text bg='green.100' px={2} mr={2} minW={'70px'} textAlign={'center'}>{l.alias}</Text>
-                  <Link href={'https://google.com'} maxW={'80%'} whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'}>
+                  <Text bg='green.100' px={2} mr={2} minW={'80px'} textAlign={'center'}>{l.alias}</Text>
+                  <Link href={l.url} maxW={'80%'} whiteSpace={'nowrap'} overflow={'hidden'} textOverflow={'ellipsis'}>
                     {l.url}
                   </Link>
                   <Spacer />
@@ -157,6 +160,21 @@ export default function Home() {
               )
             })}
           </List>
+          <Button colorScheme='green' variant='ghost' display={cursor ? 'block' : 'none'} onClick={() => {
+            fetch(`/api/list/${cursor}`)
+              .then(r => r.json())
+              .then(r => {
+                console.log(r)
+                setLinks(r.links)
+                if (r.cursor) {
+                  setCursor(r.cursor)
+                } else {
+                  setCursor(undefined)
+                }
+              })
+          }}>
+            Load more
+          </Button>
         </Stack>
       </Container>
     </>
