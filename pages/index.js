@@ -155,7 +155,21 @@ export default function Home() {
                     {l.url}
                   </Link>
                   <Spacer />
-                  <ListIcon as={SmallCloseIcon} color='green.500' role='button' />
+                  <ListIcon as={SmallCloseIcon} color='green.500' role='button' onClick={e => {
+                    const alias = e.target.closest('li').querySelector('p').textContent
+                    console.log(alias)
+                    fetch(`/api/delete/${alias}`, {
+                      method: 'delete',
+                      headers: {
+                        'X-Custom-PSK': localStorage.getItem('psk')
+                      },
+                    })
+                    .then(r => r.json())
+                    .then(r => {
+                        setLinks(links.filter((l) => l.alias !== alias))
+                        toast(r)
+                    })
+                  }} />
                 </ListItem>
               )
             })}
