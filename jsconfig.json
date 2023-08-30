@@ -3,5 +3,12 @@
     "paths": {
       "@/*": ["./*"]
     }
-  }
+  },
+  "include": [
+    "pages/**/*",
+    "functions/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
