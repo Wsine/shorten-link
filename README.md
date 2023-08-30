@@ -1,38 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Shorten Link
 
-## Getting Started
+It is self-hosted service for shortening link.
 
-First, run the development server:
+## Motivation
+
+**Why self-hosted?**
+
+Self-hosted can get rid of the registration step so that we can also avoid the alias conflicting with those of other users.
+
+**How to avoid attacks without registration?**
+
+I used a very simple symmetric encryption to protect critical operations (i.e., just a string, lol).
+
+**Any more?**
+
+I don't need the tracking feature that most out-of-the-shelf services provide.
+
+## How to deploy
+
+- Clone this repository
+- New a project in Cloudflare Pages and link to the cloned repo
+- Set the environment variable `AUTH_HEADER_VALUE` as what you want
+  - recommended to generate from https://www.uuidgenerator.net/
+
+
+## How to develop
 
 ```bash
+# Clone this repository
+git clone https://github.com/Wsine/shorten-link.git
+cd shorten-link
+# Install the dependencies
+npm install
+# Set environment variable
+echo 'AUTH_HEADER_VALUE="c516aaea-1c27-4cec-ad9c-240ba1059396"' >> .dev.vars
+# Bootstrap
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
