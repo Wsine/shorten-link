@@ -166,7 +166,9 @@ export default function Home() {
                     })
                     .then(r => r.json())
                     .then(r => {
-                        setLinks(links.filter((l) => l.alias !== alias))
+                        if (r.status === 'success') {
+                          setLinks(links.filter((l) => l.alias !== alias))
+                        }
                         toast(r)
                     })
                   }} />
