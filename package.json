@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx wrangler pages dev --kv=LINKS -- next dev",
+    "dev": "wrangler pages dev --kv=LINKS --proxy 3000 -- react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

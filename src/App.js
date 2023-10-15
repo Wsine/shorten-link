@@ -12,17 +12,17 @@ export default function App() {
   const [toBurn, setBurn] = useBoolean(false)
   const [links, setLinks] = useState([])
   const [cursor, setCursor] = useState(undefined)
-  // useEffect(() => {
-  //   fetch('/api/list')
-  //     .then(r => r.json())
-  //     .then(r => {
-  //       console.log(r)
-  //       setLinks(r.links)
-  //       if (r.cursor) {
-  //         setCursor(r.cursor)
-  //       }
-  //     })
-  // }, [])
+  useEffect(() => {
+    fetch('/api/list')
+      .then(r => r.json())
+      .then(r => {
+        console.log(r)
+        setLinks(r.links)
+        if (r.cursor) {
+          setCursor(r.cursor)
+        }
+      })
+  }, [])
   const toast = useToast()
 
   return (
