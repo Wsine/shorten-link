@@ -17,13 +17,16 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
     "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
-    "wrangler": "^3.6.0"
+    "wrangler": "^3.13.1"
   },
   "eslintConfig": {
     "extends": [
